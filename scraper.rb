@@ -1,14 +1,39 @@
 # This is a template for a Ruby scraper on morph.io (https://morph.io)
 # including some code snippets below that you should find helpful
 
-# require 'scraperwiki'
-# require 'mechanize'
-#
-# agent = Mechanize.new
-#
-# # Read in a page
-# page = agent.get("http://foo.com")
-#
+require 'scraperwiki'
+require 'mechanize'
+
+agent = Mechanize.new
+
+# Read in a page
+base_url = "http://www.parliament.nsw.gov.au/prod/parlment/nswbills.nsf/V3BillsListAll?open&vwCurr=V3AllByTitle&vwCat="
+page_letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+#page_letters = ["A"]
+
+page_letters.each do |letter|
+	page = agent.get(base_url + letter)
+	rows = page.at("table").search("tr")
+
+	rows[1..-1].each do |row|
+		bill_name = row.search("td")[0].text
+		bill_house = row.search("td")[1].text
+		bill_url = row.search("td")[0].search("a").attr("href")
+
+		record = {
+	  		bill_name: bill_name,
+	  		bill_house: bill_house,
+	  		bill_url: bill_url
+		}
+
+		p bill_name 
+
+		ScraperWiki.save_sqlite([:bill_name], record)
+
+	end
+end
+
+
 # # Find somehing on the page using css selectors
 # p page.at('div.content')
 #
