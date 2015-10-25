@@ -18,7 +18,7 @@ page_letters.each do |letter|
 	rows[1..-1].each do |row|
 		bill_name = row.search("td")[0].text
 		bill_house = row.search("td")[1].text
-		bill_url = row.search("td")[0].search("a").attr("href")
+		bill_url = row.search("td")[0].search("a").attr("href").text
 
 		record = {
 	  		bill_name: bill_name,
